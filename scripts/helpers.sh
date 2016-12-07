@@ -9,6 +9,12 @@ get_tmux_option() {
 	fi
 }
 
+set_tmux_option() {
+  local option="$1"
+  local value="$2"
+  tmux set-option -gq "$option" "$value"
+}
+
 is_osx() {
 	[ $(uname) == "Darwin" ]
 }

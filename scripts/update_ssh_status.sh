@@ -5,6 +5,7 @@ CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$CURRENT_DIR/helpers.sh"
 
 ssh_auto_rename_window_default='on'
+ssh_reset_option_name='@reset_window_name'
 
 update_ssh_info() {
   local -r ssh_commad=$(ps -t "$(tmux display -p '#{pane_tty}')" -o command= | awk '/^ssh/')
@@ -17,8 +18,10 @@ update_ssh_info() {
 
   if [[ -n "$hostname" && $auto_rename_window == 'on' ]]; then
     tmux rename-window "ssh:$hostname"
-  else
+    set_tmux_option "$ssh_reset_option_name" 'yes'
+  elif [[ -n "$(get_tmux_option "$ssh_reset_option_name")" ]]; then
     tmux set-window-option automatic-rename 'on' 1>/dev/null
+    set_tmux_option "$ssh_reset_option_name" ''
   fi
 
   if [[ -n "$hostname" && -n "$username" ]]; then
